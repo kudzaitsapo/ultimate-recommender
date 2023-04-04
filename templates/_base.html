@@ -1,9 +1,16 @@
 <!-- templates/_base.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en-us">
     <head>
-        <meta charset="utf-8">
-        <title>{% block title %}Recommender System{% endblock title %}</title> 
+        <meta charset="utf-8" />
+        <meta name="description" content="My web app" />
+        <meta name="keywords"
+              content="web app, recommender system, anime recommender"/>
+        <title>
+            {% block title %}
+                Recommender System
+            {% endblock title %}
+        </title>
     </head>
     <body>
         <div class="container">
