@@ -1,0 +1,24 @@
+<!-- templates/books/book_list.html -->
+{% extends "_base.html" %}
+{% block title %}
+    Books
+{% endblock title %}
+{% block content %}
+    {% for book in book_list %}
+        <div>
+            <h2>
+                <a href="{{ book.get_absolute_url }}">{{ book.title }}</a>
+            </h2>
+        </div>
+    {% endfor %}
+    {% if is_paginated %}
+        {% for page_number in page_obj.paginator.get_elided_page_range %}
+            {% if page_number == page_obj.paginator.ELLIPSIS %}
+                {{ page_number }}
+            {% else %}
+                <a href="?page={{ page_number }}"
+                   class="{% if page_number == page_obj.number %}current{% endif %}">{{ page_number }}</a>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endblock content %}
