@@ -1,24 +1,59 @@
 <!-- templates/books/book_list.html -->
 {% extends "_base.html" %}
+{% load as_chunked %}
 {% block title %}
     Books
 {% endblock title %}
 {% block content %}
-    {% for book in book_list %}
-        <div>
-            <h2>
-                <a href="{{ book.get_absolute_url }}">{{ book.title }}</a>
-            </h2>
+    <!-- Header-->
+    <header class="bg-dark py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">All books</h1>
+                <p class="lead fw-normal text-white-50 mb-0">View all the books in the system so far</p>
+            </div>
         </div>
-    {% endfor %}
-    {% if is_paginated %}
-        {% for page_number in page_obj.paginator.get_elided_page_range %}
-            {% if page_number == page_obj.paginator.ELLIPSIS %}
-                {{ page_number }}
-            {% else %}
-                <a href="?page={{ page_number }}"
-                   class="{% if page_number == page_obj.number %}current{% endif %}">{{ page_number }}</a>
+    </header>
+    <!-- Section-->
+    <section class="py-5">
+        <div class="container px-4 px-lg-5 mt-5">
+            {% for chunk in book_list|as_chunks:4 %}
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 ">
+                    {% for book in chunk %}
+                        <div class="col mb-5">
+                            <a class="card h-100 shadow" href="{{ book.get_absolute_url }}">
+                                <!-- Book cover -->
+                                <img class="card-img-top"
+                                     width="450"
+                                     height="300"
+                                     src="{{ book.image_link }}"
+                                     alt="..."/>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <!-- Pagination-->
+            {% if is_paginated %}
+                <nav aria-label="Pagination">
+                    <hr class="my-0" />
+                    <ul class="pagination justify-content-center my-4">
+                        {% for page_number in page_obj.paginator.get_elided_page_range %}
+                            {% if page_number == page_obj.paginator.ELLIPSIS %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#!">...</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link {% if page_number == page_obj.number %}active{% endif %}"
+                                       href="?page={{ page_number }}"
+                                       {% if page_number == page_obj.number %}aria-current="page"{% endif %}>{{ page_number }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </nav>
             {% endif %}
-        {% endfor %}
-    {% endif %}
+        </div>
+    </section>
 {% endblock content %}
