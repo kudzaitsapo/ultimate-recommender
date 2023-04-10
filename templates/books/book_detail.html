@@ -16,21 +16,50 @@
                 </div>
                 <div class="col-md-6">
                     <div class="small mb-1">Rating: {{ book.rating }}</div>
-                    <h1 class="display-5 fw-bolder">{{ book.title }}</h1>
+                    <h1 class="display-5 fw-bolder">{{ book.title|truncatewords:10 }}</h1>
                     <h4>By {{ book.author }}</h4>
                     <div class="fs-5 mb-5">
                         <span>{{ book.genre }}</span>
                     </div>
-                    <p class="lead">{{ book.description }}</p>
+                    <p class="lead">{{ book.description|truncatewords:50 }}</p>
                     <div class="d-flex">
                         <a href="{% url 'book_list' %}"
-                           class="btn btn-outline-dark flex-shrink-0">
+                           class="btn btn-outline-dark flex-shrink-0 me-3">
                             <i class="bi-arrow-left me-1"></i>
                             Back
                         </a>
+                        <form id="like" method="post">
+                            {% csrf_token %}
+                            <button class="btn btn-dark flex-shrink-0 ml-3"
+                                    type="button"
+                                    id="likeBtn"
+                                    data-id="{{ book.id }}"
+                                    onClick="onLike();return false;">
+                                Like
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 {% endblock content %}
+{% block scripts %}
+    <script>
+        function onLike() {
+            var bookId = $('#likeBtn').attr('data-id');
+            var CSRFtoken = $('input[name=csrfmiddlewaretoken]').val();
+            //Ajax Function to send a get request
+            $.ajax({
+                type: "POST",
+                url: "",
+                dataType:"jsonp",
+                data: {csrfmiddlewaretoken: CSRFtoken, bookId: bookId},
+                success: function(response){
+                    //if request if made successfully then the response represent the data
+                   console.log("LOG:: response from server", JSON.stringify(response));
+                }
+            });
+        }
+    </script>
+{% endblock scripts %}

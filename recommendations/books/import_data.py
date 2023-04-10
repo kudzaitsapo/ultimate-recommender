@@ -55,9 +55,8 @@ def main():
         dataframe = pd.read_csv(data_file)
 
         print("[+] Cleaning dataframe to match database.")
-        dataframe = dataframe[["title", "Desc", "author", "genre", "image_link", "rating"]]
+        dataframe = dataframe[["title", "Desc", "author", "genre", "image_link", "rating", "id"]]
         dataframe.rename(columns={"Desc": "description"}, inplace=True)
-        dataframe["id"] = [uuid.uuid4() for _ in range(len(dataframe.index))]
 
         db_connection = connect(connection_params)
         execute_values(db_connection, dataframe, "books_book")

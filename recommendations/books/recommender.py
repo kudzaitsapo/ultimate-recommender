@@ -12,11 +12,11 @@ DF_NAME = "dataset.csv"
 
 BASE_DIR = Path(__file__).resolve().parent
 data_file = BASE_DIR / "data/dataset.csv"
+model_file = BASE_DIR / MODEL_NAME
 
 
 # utility function declarations
 def get_vectors(df, model):
-
     # Creating a list for storing the vectors (description into vectors)
     # global word_embeddings
     word_embeddings = []
@@ -71,7 +71,6 @@ def get_tfidf_vectors(df, model, tfidf_list, tfidf_feature):
 
 
 def recommendations(title, df, model):
-
     # Calling the function vectors
 
     embeddings = get_vectors(df, model)
@@ -122,7 +121,7 @@ def recommend_tfdf(title, df, model):
     cosine_similarities = cosine_similarity(tfidf_vectors, tfidf_vectors)
 
     # taking the title and book image link and store in new data frame called books
-    books = df[["title", "image_link"]]
+    books = df[["title", "id"]]
     # Reverse mapping of the index
     indices = pd.Series(df.index, index=df["title"]).drop_duplicates()
 
@@ -137,6 +136,6 @@ def recommend_tfdf(title, df, model):
 
 
 def recommend_book(title):
-    model = Word2Vec.load(MODEL_NAME)
-    dataframe = pd.read_csv(DF_NAME)
+    model = Word2Vec.load(str(model_file))
+    dataframe = pd.read_csv(str(data_file))
     return recommend_tfdf(title, dataframe, model)

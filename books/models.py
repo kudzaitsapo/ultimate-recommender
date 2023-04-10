@@ -2,6 +2,8 @@ import uuid
 from django.db import models
 from django.urls import reverse
 
+from common.models.recommended import RecommenderModel
+
 
 # Create your models here.
 class Book(models.Model):
@@ -18,3 +20,11 @@ class Book(models.Model):
 
     def get_absolute_url(self):
         return reverse("book_detail", args=[str(self.id)])
+
+
+class BookRecommendation(RecommenderModel):
+    book = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE,
+        related_name="recommendation",
+    )

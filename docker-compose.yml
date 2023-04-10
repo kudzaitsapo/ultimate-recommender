@@ -10,15 +10,50 @@ services:
       - 8000:8000
     depends_on:
       - db
-    environment:
-      - "DJANGO_SECRET_KEY=django-insecure-mp!+7v8=n-p$$oi9cae20!z95$$j_v3llt4pxpm!1-!)7t3kudr1"
-      - "DATABASE_URL=postgres://postgres:postgres@db/postgres"
+    env_file:
+      - .env
+
+    # environment:
+    #   - DJANGO_SECRET_KEY=django-insecure-mp!+7v8=n-p$$oi9cae20!z95$$j_v3llt4pxpm!1-!)7t3kudr1
+    #   - "DATABASE_URL=postgres://postgres:postgres@db/postgres"
+    #   - "RABBITMQ_DEFAULT_USER=user"
+    #   - "RABBITMQ_DEFAULT_PASS=somesecretpasswordidontknow"
+
+  # Postgres database
   db:
     image: postgres:13
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
       - "POSTGRES_HOST_AUTH_METHOD=trust"
+
+  # RabbitMQ
+  rabbit:
+    hostname: rabbit
+    image: rabbitmq:3.7-management
+    restart: always
+    env_file:
+      - .env
+    # environment:
+    #   - RABBITMQ_DEFAULT_USER=user
+    #   - RABBITMQ_DEFAULT_PASS=somesecretpasswordidontknow
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  # celery configuration
+  celery:
+    restart: always
+    build:
+      context: .
+    command: celery -A capstone worker -l info
+    volumes:
+      - .:/test_celery
+    env_file:
+      - .env
+    depends_on:
+      - web
+      - rabbit
 
 volumes:
   postgres_data:
