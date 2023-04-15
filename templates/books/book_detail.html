@@ -28,16 +28,11 @@
                             <i class="bi-arrow-left me-1"></i>
                             Back
                         </a>
-                        <form id="like" method="post">
-                            {% csrf_token %}
-                            <button class="btn btn-dark flex-shrink-0 ml-3"
-                                    type="button"
-                                    id="likeBtn"
-                                    data-id="{{ book.id }}"
-                                    onClick="onLike();return false;">
-                                Like
-                            </button>
-                        </form>
+                        {% if not has_liked_book %}
+                            <a class="btn btn-dark flex-shrink-0 ml-3"
+                               href="{% url 'like_book' book.id %}"
+                               id="likeBtn">Like</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -45,21 +40,5 @@
     </section>
 {% endblock content %}
 {% block scripts %}
-    <script>
-        function onLike() {
-            var bookId = $('#likeBtn').attr('data-id');
-            var CSRFtoken = $('input[name=csrfmiddlewaretoken]').val();
-            //Ajax Function to send a get request
-            $.ajax({
-                type: "POST",
-                url: "",
-                dataType:"jsonp",
-                data: {csrfmiddlewaretoken: CSRFtoken, bookId: bookId},
-                success: function(response){
-                    //if request if made successfully then the response represent the data
-                   console.log("LOG:: response from server", JSON.stringify(response));
-                }
-            });
-        }
-    </script>
+    <script></script>
 {% endblock scripts %}

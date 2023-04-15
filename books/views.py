@@ -1,13 +1,19 @@
 # books/views.py
 import json
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.views.generic import ListView, DetailView
-from django.core.serializers import serialize
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
+from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 
 from books.tasks import create_book_recommendations
-from .models import Book
+from .models import Book, BookRecommendation, BookUserLikes
+
+
+User = get_user_model()
 
 
 class BookListView(LoginRequiredMixin, ListView):
@@ -24,10 +30,35 @@ class BookDetailView(LoginRequiredMixin, DetailView):
     login_url = "account_login"
     template_name = "books/book_detail.html"
 
-    def post(self, request, *args, **kwargs):
-        bookId = self.get_object().pk
+    extra_context = {"has_liked_book": False}
 
-        create_book_recommendations.delay(request.user.id, liked_book_ids=[bookId])
+    def get_object(self):
+        obj = super().get_object()
+        user_id = self.request.user.id
 
-        resp = dict(message="Successfully done something")
-        return JsonResponse(resp, content_type="application/json")
+        self.extra_context["has_liked_book"] = obj.has_user_liked_book(user_id)
+        return obj
+
+
+@login_required
+def like_book(request, id):
+    book = Book.objects.get(pk=id)
+
+    if book is None:
+        messages.error(request, "Book not found!")
+        return redirect(BookListView)
+
+    user = User.objects.get(pk=request.user.id)
+
+    liked_book = BookUserLikes(user=user, book=book)
+    liked_book.save()
+
+    create_book_recommendations.delay(request.user.id, book.id)
+
+    return redirect(reverse("book_detail", args=[id]))
+
+
+@login_required
+def get_recommended_books(request):
+    recommended_books = BookRecommendation.objects.filter(user__pk=request.user.id)
+    return render(request, "books/recommended.html", context={"book_list": recommended_books})

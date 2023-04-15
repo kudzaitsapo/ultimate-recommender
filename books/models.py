@@ -1,6 +1,9 @@
 import uuid
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
+
+# from books.tasks import create_book_recommendations
 
 from common.models.recommended import RecommenderModel
 
@@ -21,6 +24,10 @@ class Book(models.Model):
     def get_absolute_url(self):
         return reverse("book_detail", args=[str(self.id)])
 
+    def has_user_liked_book(self, user_id):
+        is_book_liked = BookUserLikes.objects.filter(book__id=self.id, user__id=user_id).exists()
+        return is_book_liked
+
 
 class BookRecommendation(RecommenderModel):
     book = models.ForeignKey(
@@ -28,3 +35,12 @@ class BookRecommendation(RecommenderModel):
         on_delete=models.CASCADE,
         related_name="recommendation",
     )
+
+
+class BookUserLikes(RecommenderModel):
+    book = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE,
+        related_name="like",
+    )
+    created_at = models.DateTimeField(default=timezone.now)

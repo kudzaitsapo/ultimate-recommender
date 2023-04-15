@@ -30,17 +30,16 @@ Algorithm to recommend books based on a user's liked books:
 
 
 @shared_task()
-def create_book_recommendations(user_id, liked_book_ids=[]):
+def create_book_recommendations(user_id, liked_book_id):
     user = User.objects.get(pk=user_id)
-    for id in liked_book_ids:
-        book = Book.objects.get(pk=id)
-        new_recommendations = recommend_book(book.title)
-        logger.info("Length of recommendations dataframe: {}".format(str(len(new_recommendations.index))))
-        for item in new_recommendations.itertuples():
-            if not is_book_already_recommended_to_user(item.id, user):
-                recommended_book = Book.objects.get(pk=item.id)
-                recommendation = BookRecommendation(book=recommended_book, user=user)
-                recommendation.save()
-                logger.info("Recommended book {} to {}".format(item.title, user))
-            else:
-                logger.info("Book {} has already been recommended to {}".format(item.title, user))
+    book = Book.objects.get(pk=liked_book_id)
+    new_recommendations = recommend_book(book.title)
+    logger.info("Length of recommendations dataframe: {}".format(str(len(new_recommendations.index))))
+    for item in new_recommendations.itertuples():
+        if not is_book_already_recommended_to_user(item.id, user):
+            recommended_book = Book.objects.get(pk=item.id)
+            recommendation = BookRecommendation(book=recommended_book, user=user)
+            recommendation.save()
+            logger.info("Recommended book {} to {}".format(item.title, user))
+        else:
+            logger.info("Book {} has already been recommended to {}".format(item.title, user))
