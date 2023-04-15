@@ -38,6 +38,26 @@
             </div>
         </div>
     </section>
+    <!-- Related items section-->
+    {% if has_liked_book and recommendations %}
+        <section class="py-5 bg-light">
+            <div class="container px-4 px-lg-5 mt-5">
+                <h2 class="fw-bolder mb-4">You might also like</h2>
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                    {% for recommended in recommendations %}
+                        <div class="col mb-5">
+                            <a class="card h-100" href="{{ recommended.book.get_absolute_url }}">
+                                <!-- Book image-->
+                                <img class="card-img-top"
+                                     src="{{ recommended.book.image_link }}"
+                                     alt="..."/>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    {% endif %}
 {% endblock content %}
 {% block scripts %}
     <script></script>

@@ -38,7 +38,7 @@ def create_book_recommendations(user_id, liked_book_id):
     for item in new_recommendations.itertuples():
         if not is_book_already_recommended_to_user(item.id, user):
             recommended_book = Book.objects.get(pk=item.id)
-            recommendation = BookRecommendation(book=recommended_book, user=user)
+            recommendation = BookRecommendation(book=recommended_book, user=user, source=book)
             recommendation.save()
             logger.info("Recommended book {} to {}".format(item.title, user))
         else:

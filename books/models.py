@@ -35,6 +35,7 @@ class BookRecommendation(RecommenderModel):
         on_delete=models.CASCADE,
         related_name="recommendation",
     )
+    source = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="source", blank=True, null=True)
 
 
 class BookUserLikes(RecommenderModel):

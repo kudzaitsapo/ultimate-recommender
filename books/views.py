@@ -35,8 +35,12 @@ class BookDetailView(LoginRequiredMixin, DetailView):
     def get_object(self):
         obj = super().get_object()
         user_id = self.request.user.id
-
-        self.extra_context["has_liked_book"] = obj.has_user_liked_book(user_id)
+        has_liked_book = obj.has_user_liked_book(user_id)
+        self.extra_context["has_liked_book"] = has_liked_book
+        if has_liked_book:
+            self.extra_context["recommendations"] = BookRecommendation.objects.filter(
+                source__pk=obj.id, user__pk=user_id
+            )[:4]
         return obj
 
 
