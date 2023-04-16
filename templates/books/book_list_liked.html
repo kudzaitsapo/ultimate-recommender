@@ -19,14 +19,15 @@
         <div class="container px-4 px-lg-5 mt-5">
             {% for chunk in book_list|as_chunks:4 %}
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 ">
-                    {% for book in chunk %}
+                    {% for liked_book in chunk %}
                         <div class="col mb-5">
-                            <a class="card h-100 shadow" href="{{ book.get_absolute_url }}">
+                            <a class="card h-100 shadow"
+                               href="{{ liked_book.book.get_absolute_url }}">
                                 <!-- Book cover -->
                                 <img class="card-img-top"
                                      width="450"
                                      height="300"
-                                     src="{{ book.image_link }}"
+                                     src="{{ liked_book.book.image_link }}"
                                      alt="..."/>
                             </a>
                         </div>

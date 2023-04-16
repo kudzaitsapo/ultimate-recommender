@@ -50,6 +50,28 @@ class BookDetailView(LoginRequiredMixin, DetailView):
         return obj
 
 
+class RecommendedBooksView(LoginRequiredMixin, ListView):
+    model = BookRecommendation
+    context_object_name = "book_list"
+    login_url = "account_login"
+    paginate_by = 12
+    template_name = "books/recommended.html"
+
+    def get_queryset(self):
+        return super().get_queryset().filter(user__pk=self.request.user.id)
+
+
+class LikedBooksView(LoginRequiredMixin, ListView):
+    model = BookUserLikes
+    context_object_name = "book_list"
+    login_url = "account_login"
+    paginate_by = 12
+    template_name = "books/book_list_liked.html"
+
+    def get_queryset(self):
+        return super().get_queryset().filter(user__pk=self.request.user.id)
+
+
 @login_required
 def like_book(request, id):
     book = Book.objects.get(pk=id)
@@ -66,9 +88,3 @@ def like_book(request, id):
     create_book_recommendations.delay(request.user.id, book.id)
 
     return redirect(reverse("book_detail", args=[id]))
-
-
-@login_required
-def get_recommended_books(request):
-    recommended_books = BookRecommendation.objects.filter(user__pk=request.user.id)
-    return render(request, "books/recommended.html", context={"book_list": recommended_books})
