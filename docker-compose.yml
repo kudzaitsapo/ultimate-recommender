@@ -10,14 +10,9 @@ services:
       - 8000:8000
     depends_on:
       - db
+      - es
     env_file:
       - .env
-
-    # environment:
-    #   - DJANGO_SECRET_KEY=django-insecure-mp!+7v8=n-p$$oi9cae20!z95$$j_v3llt4pxpm!1-!)7t3kudr1
-    #   - "DATABASE_URL=postgres://postgres:postgres@db/postgres"
-    #   - "RABBITMQ_DEFAULT_USER=user"
-    #   - "RABBITMQ_DEFAULT_PASS=somesecretpasswordidontknow"
 
   # Postgres database
   db:
@@ -34,9 +29,7 @@ services:
     restart: always
     env_file:
       - .env
-    # environment:
-    #   - RABBITMQ_DEFAULT_USER=user
-    #   - RABBITMQ_DEFAULT_PASS=somesecretpasswordidontknow
+
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -54,6 +47,17 @@ services:
     depends_on:
       - web
       - rabbit
+
+  # elasticsearch configuration
+  es:
+    image: elasticsearch:7.8.1
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - .:/elasticsearch
 
 volumes:
   postgres_data:

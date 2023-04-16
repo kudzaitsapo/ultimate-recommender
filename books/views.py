@@ -3,6 +3,7 @@ import json
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.views import View
 from django.views.generic import ListView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
@@ -14,6 +15,16 @@ from .models import Book, BookRecommendation, BookUserLikes
 
 
 User = get_user_model()
+
+
+@login_required
+def index(request):
+    pass
+
+
+@login_required
+def search(request):
+    pass
 
 
 class BookListView(LoginRequiredMixin, ListView):

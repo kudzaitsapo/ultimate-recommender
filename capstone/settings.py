@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "django_celery_results",
+    "haystack",
     # Local
     "accounts.apps.AccountsConfig",
     "pages.apps.PagesConfig",
@@ -164,3 +165,14 @@ CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_BROKER_URL = f'amqp://{env("RABBITMQ_DEFAULT_USER")}:{env("RABBITMQ_DEFAULT_PASS")}@rabbit//'
 CELERY_TASK_RESULT_EXPIRES = 18000
+
+
+# Haystack config
+HAYSTACK_CONNECTIONS = {
+    "default": {
+        "ENGINE": "haystack.backends.elasticsearch7_backend.Elasticsearch7SearchEngine",
+        "URL": env("ES_BACKEND_URL"),
+        "INDEX_NAME": env("ES_INDEX_NAME"),
+    },
+}
+HAYSTACK_SIGNAL_PROCESSOR = "haystack.signals.RealtimeSignalProcessor"

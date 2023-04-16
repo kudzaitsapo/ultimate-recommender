@@ -21,8 +21,12 @@ django-allauth==0.54.0
 django-cache-url==3.4.4
 django-celery-results==2.5.0
 django-crispy-forms==2.0
+django-elasticsearch-dsl==7.3
+django-haystack==3.2.1
 djlint==1.19.16
 EditorConfig==0.12.3
+elasticsearch==7.17.9
+elasticsearch-dsl==7.4.1
 environs==9.5.0
 gensim==4.3.1
 html-tag-names==0.1.2
