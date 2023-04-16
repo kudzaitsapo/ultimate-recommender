@@ -19,12 +19,7 @@ User = get_user_model()
 
 @login_required
 def index(request):
-    pass
-
-
-@login_required
-def search(request):
-    pass
+    return render(request, "books/index.html")
 
 
 class BookListView(LoginRequiredMixin, ListView):
